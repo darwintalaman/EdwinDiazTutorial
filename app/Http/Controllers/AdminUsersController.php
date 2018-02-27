@@ -46,16 +46,29 @@ class AdminUsersController extends Controller
     public function store(UsersRequest $request)
     {
         //
+        $input = $request->all();
+
+        if($file = $request->file('photo_id')){
+           $input = $request->all();
+            
+           $file = $request->file('photo_id');
+
+           $file->move(storage_path('app/public'), $file->getClientOriginalName());
+
+           $photo = Photo::create(['file'=>$file->getClientOriginalName()]);
+
+           $input['photo_id'] = $photo->id;
+
+               
+        }
+           $input['password'] = bcrypt($request->password);
+           User::create($input);
+
+           return redirect('/admin/users');
+
+    }
+
         
-       
-        return $request->all();
-
-    
-
-       
-
-       
-    }   
        
     /**
      * Display the specified resource.
@@ -90,7 +103,7 @@ class AdminUsersController extends Controller
     {
         //
 
-
+       
     }
 
     /**
